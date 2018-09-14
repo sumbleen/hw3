@@ -6,7 +6,7 @@ As usual, fork this repository, clone your fork, add and commit your changes, pu
 
 For each question (Q#), write a short narrative answer. Your answers should be written in [Markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) and saved in a `README.md` file in a `results` subdirectory of this repository. Clearly indicate question numbers by using headings.
 
-For Mac users, you can use [MacDown](https://macdown.uranusjr.com) to see how the document will be formatted. For Windows (or Mac) users, Siri recommends [Texts](https://macdown.uranusjr.com).
+For Mac users, you can use [MacDown](https://macdown.uranusjr.com) to see how the document will be formatted. For Windows (or Mac) users, Siri recommends [Texts](http://texts.io).
 
 
 ## Part I: Using RSFgen
@@ -99,6 +99,7 @@ make_random_timing.py -num_stim 3 -num_runs 1 \
 -stim_labels A B C \
 -num_reps 20 \
 -prefix stimt \
+-stim_dur 0 \
 -seed N
 ```
 
@@ -119,6 +120,8 @@ As for Part I, run your script for 10,000 iterations and plot the best design.
 
 ### Limit the number of repetitions
 We often want to pseudorandomize condition order so that runs of consecutive stimuli of the same type are shorter than they would be [by chance](https://en.wikipedia.org/wiki/Gambler%27s_fallacy).
+
+The `-max_consec` option to `make_random_timing.py` can be used to limit the number of consecutive presentations of the same stimulus type. This can be specified as either a single limit for all classes (e.g. `-max_consec 2`) or a limit for every class (e.g. `-max_consec 2 2 2`). Rerun your script, adding the option `-max_consec 1`, which will eliminate runs of stimuli from the same condition.
 
 **Q3**: What do you observe about the timing structure of the best design compared to the best `RSFgen` design? Why is this?
 
