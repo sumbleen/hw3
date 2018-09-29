@@ -6,7 +6,7 @@ As usual, fork this repository, clone your fork, add and commit your changes, pu
 
 For each question (Q#), write a short narrative answer. Your answers should be written in [Markdown](https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet) and saved in a `README.md` file in a `results` subdirectory of this repository. Clearly indicate question numbers by using headings.
 
-For Mac users, you can use [MacDown](https://macdown.uranusjr.com) to see how the document will be formatted. For Windows (or Mac) users, Siri recommends [Texts](https://macdown.uranusjr.com).
+For Mac users, you can use [MacDown](https://macdown.uranusjr.com) to see how the document will be formatted. For Windows (or Mac) users, Siri recommends [Texts](http://texts.io).
 
 
 ## Part I: Using RSFgen
@@ -31,7 +31,7 @@ Make sure you organize your files so that:
 
 The relevant commands from class are:
 
-```
+```bash
 RSFgen \
 -nt 300 \
 -num_stimts 3 \
@@ -42,7 +42,7 @@ RSFgen \
 -prefix stim_
 ```
 
-```
+```bash
 make_stim_times.py \
 -files stim_*.1D \
 -prefix stimt \
@@ -52,7 +52,7 @@ make_stim_times.py \
 ```
 
 
-```
+```bash
 3dDeconvolve -nodata 300 1 -polort 1 \
 -num_stimts 3 \
 -stim_times 1 stimt.01.1D 'GAM' -stim_label 1 'A' \
@@ -63,7 +63,7 @@ make_stim_times.py \
 
 
 ### What is the best design?
-Run your `rsf_gen_timing_01.sh` script for 10,000 iterations. Your script should print out the efficiency and random seed (on the same line) for each iteration. You should save this output to a file. Identify the best design and corresponding random seed.
+Run your `rsf_gen_timing_01.sh` script for 500 iterations. Your script should print out the efficiency and random seed (on the same line) for each iteration. You should save this output to a file. Identify the best design and corresponding random seed.
 
 HINT: You can sort the first column of a file in numeric order with `sort -n -k 1`. `tail` and `head` can be used to select the last or first line of the sorted output.
 
@@ -71,7 +71,7 @@ Rerun `RSFgen` with the best seed and adding the `-one_file` option. This will c
 
 Plot this design using
 
-```
+```bash
 1dplot -one -png design.png stim.1D
 
 ```
@@ -93,12 +93,13 @@ While completing Part I you may have noticed some undesirable limitations of `RS
 
 The command
 
-```
+```bash
 make_random_timing.py -num_stim 3 -num_runs 1 \
 -run_time 300 \
 -stim_labels A B C \
 -num_reps 20 \
 -prefix stimt \
+-stim_dur 1 \
 -seed N
 ```
 
@@ -111,7 +112,16 @@ Create a new script `mrt_timing_01.sh` that replicates Part 1 using `make_random
 
 Copy your `mrt_timing_01.sh` script to a new file and modify the script to generate timings for trials with a 2 second stimulus duration and 1 to 5 seconds of rest following the stimulus (so the mean trial duration is approximately 5 seconds).
 
-As for Part I, run your script for 10,000 iterations and plot the best design.
+Run your script for 5,000 iterations and plot the best design. You can create a file containing a single column of all events using
+
+```bash
+timing_tool.py -multi_timing mrt_times/stimt_${i}_*.1D \
+-multi_timing_to_events mrt_times.1d -tr 1 -multi_stim_dur 1 \
+-min_frac .5  -run_len 300
+```
+
+where `mrt_times/stimt_${i}_*.1D` is an expression matching the desired timing files.
+
 
 **Q2**: What do you observe about the timing structure of the best design compared to the best `RSFgen` design? Why is this?
 
@@ -119,6 +129,8 @@ As for Part I, run your script for 10,000 iterations and plot the best design.
 
 ### Limit the number of repetitions
 We often want to pseudorandomize condition order so that runs of consecutive stimuli of the same type are shorter than they would be [by chance](https://en.wikipedia.org/wiki/Gambler%27s_fallacy).
+
+The `-max_consec` option to `make_random_timing.py` can be used to limit the number of consecutive presentations of the same stimulus type. This can be specified as either a single limit for all classes (e.g. `-max_consec 2`) or a limit for every class (e.g. `-max_consec 2 2 2`). Rerun your script, adding the option `-max_consec 1`, which will eliminate runs of stimuli from the same condition.
 
 **Q3**: What do you observe about the timing structure of the best design compared to the best `RSFgen` design? Why is this?
 
